@@ -17,4 +17,13 @@ $router->put('/product/{id}', 'ProductController@update');
 $router->delete('/product/{id}', 'ProductController@destroy');
 
 $router->post('/login', 'AuthController@login');
+$router->put('/update', 'AuthController@updateUser');
+$router->delete('/destroy', 'UserController@destroy');
+$router->post('/create', 'UserController@create');
+
+$router->get('/users', 'UserController@index');
+$router->post('/user', 'UserController@create');
+$router->get('/users/{id}', 'UserController@show');
+$router->put('/user/{id}', 'UserController@update');
+$router->delete('/user/{id}', 'UserController@destroy');
 });

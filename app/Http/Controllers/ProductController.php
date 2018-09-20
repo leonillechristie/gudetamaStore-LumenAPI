@@ -12,9 +12,6 @@ class ProductController extends Controller
     public function index(Request $request)
     {
      	$query = $request->all();
-
-
-
      // $products = Product::all();
     $products = '[
     {
