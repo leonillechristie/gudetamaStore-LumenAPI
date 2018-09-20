@@ -10,6 +10,7 @@ $factory->define(App\Product::class, function (Faker\Generator $faker) {
         'city' => $faker->address,
         'price' => rand(0, 300),
         'description'=>$faker->text,
+        'image' => $faker->url,
     ];
 });
 
