@@ -138,14 +138,42 @@ class UserController extends Controller
 
      public function create(Request $request)
      {
-       $user = new User;
-       $user->name= $request->name;
-       $user->email = $request->email;
-       $user->avatar = $request->avatar;
-       $user->password = Hash::make('secret');
+       $results = ['statusCode' => 200];
 
-       $user->save();
-       return response()->json($user);
+       try {
+            $formData = $request->all();
+            $requiredFields = ['name', 'email', 'avatar'];
+
+            foreach ($requiredFields as $field) {
+              if (!array_key_exists($field, $formData)) {
+                throw new \InvalidArgumentException("Missing required field: {$field}");
+              }
+
+              if (strlen($formData[$field]) < 1) {
+                throw new \InvalidArgumentException("Invalid field: {$field}, must be a valid string.");   
+              }
+            }
+
+            $user = new User;
+
+            $user->name = $request->input('name');
+            $user->email = $request->input('email');
+            $user->avatar = $request->avatar;
+            $user->password = Hash::make('secret');
+
+            $existingUser = User::where('email', '=', $formData['email'])->first();
+
+            if (is_a($existingUser, 'App\User')) {
+              throw new \RuntimeException('Email is already used by another user.');
+            }
+
+            $user->save();
+        } catch(\Exception $e) {
+            $results['error'] = $e->getMessage();
+            $results['statusCode'] = 500;
+        }
+
+        return response()->json($results, $results['statusCode']);
      }
      
      public function show($id)
