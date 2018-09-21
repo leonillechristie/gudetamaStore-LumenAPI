@@ -109,39 +109,124 @@ class ProductController extends Controller
   	}
 
     return response()->json(['data' => $results]);
-
     }
 
      public function create(Request $request)
      {
-        $product = new Product;
-       $product->name= $request->name;
-       $product->price = $request->price;
-       $product->description= $request->description;
-       
-       $product->save();
-       return response()->json($product);
+       $results = ['statusCode' => 200];
+
+       try {
+            $formData = $request->all();
+            $requiredFields = ['title', 'owner', 'category', 'city', 'image', 'price', 'description'];
+            
+            $product = new Product;
+
+            $product->title= $request->title;
+            $product->owner = $request->owner;
+            $product->category= $request->category;
+            $product->city = $request->city;
+            $product->image = $request->image;
+            $product->price = $request->price;          
+            $product->description= $request->description;
+
+            foreach ($requiredFields as $field) {
+              if (!array_key_exists($field, $formData)) {
+                throw new \InvalidArgumentException("Missing required field: {$field}");
+              }
+
+              if (strlen($formData[$field]) < 1) {
+                throw new \InvalidArgumentException("Invalid field: {$field}, must be a valid string.");   
+              }
+            }
+
+            $product->save();
+            $results['data'] = $product;
+        } catch(\Exception $e) {
+            $results['error'] = $e->getMessage();
+            $results['statusCode'] = 500;
+        }
+
+        return response()->json($results, $results['statusCode']);
      }
      
      public function show($id)
      {
-        $product = Product::find($id);
-        return response()->json($product);
+        $results = ['statusCode' => 200];
+        
+        try {
+          $product = Product::find($id);
+
+          if (!is_a($product, 'App\Product')) {
+            throw new \RuntimeException('Product with id: { $id } not found.');
+          }
+        } catch(\Exception $e) {
+          $results['error'] = $e->getMessage();
+          $results['statusCode'] = 500;
+        }
+
+        return response()->json($product, $results['statusCode']);
      }
+
      public function update(Request $request, $id)
      { 
-        $product= Product::find($id);
-        
-        $product->name = $request->input('name');
-        $product->price = $request->input('price');
-        $product->description = $request->input('description');
-        $product->save();
-        return response()->json($product);
+        $results = ['statusCode' => 200];
+
+        try {
+            $formData = $request->all();
+
+            $requiredFields = ['title', 'owner', 'category', 'city', 'image', 'price', 'description'];
+
+            $product->title = $request->input('title');
+            $product->owner = $request->input('owner');
+            $product->category = $request->input('category');
+            $product->city = $request->input('city');
+            $product->image = $request->input('image');
+            $product->price = $request->input('price');
+            $product->description = $request->input('description');
+
+            foreach ($requiredFields as $field) {
+              if (!array_key_exists($field, $formData)) {
+                throw new \InvalidArgumentException("Missing required field: {$field}");
+              }
+
+              if (strlen($formData[$field]) < 1) {
+                throw new \InvalidArgumentException("Invalid field: {$field}, must be a valid string.");   
+              }
+            }
+
+            $product= Product::find($id);
+
+            if (!is_a($product, 'App\Product')) {
+                throw new \RuntimeException('Product does not exist.');
+            }
+
+            $product->save();
+            $results['data'] = $product;
+        } catch(\Exception $e) {
+            $results['error'] = $e->getMessage();
+            $results['statusCode'] = 500;
+        }
+
+        return response()->json($results, $results['statusCode']);
      }
+
      public function destroy($id)
      {
-        $product = Product::find($id);
-        $product->delete();
-         return response()->json('product removed successfully');
+        try {
+          $product = Product::find($id);
+
+          if (!is_a($user, 'App\User')) {
+            throw new \RuntimeException('User with id: { $id } not found. Cannot be deleted.');
+          }
+
+          $product->delete();
+          $message = "Product successfully deleted.";
+
+        } catch(\Exception $e) {
+          $results['error'] = $e->getMessage();
+          $results['statusCode'] = 500;
+        }
+
+        return response()->json($message, $results['statusCode']);
      }
 }
