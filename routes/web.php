@@ -11,10 +11,10 @@
 */
 $router->group(['prefix'=>'api/v1'], function() use($router){
 $router->get('/products', 'ProductController@index');
-$router->post('/product', 'ProductController@create');
-$router->get('/product/{id}', 'ProductController@show');
-$router->put('/product/{id}', 'ProductController@update');
-$router->delete('/product/{id}', 'ProductController@destroy');
+$router->post('/products', 'ProductController@create');
+$router->get('/products/{id}', 'ProductController@show');
+$router->put('/products/{id}', 'ProductController@update');
+$router->delete('/products/{id}', 'ProductController@destroy');
 
 $router->post('/login', 'AuthController@login');
 $router->put('/update', 'AuthController@updateUser');
@@ -22,8 +22,8 @@ $router->delete('/destroy', 'UserController@destroy');
 $router->post('/create', 'UserController@create');
 
 $router->get('/users', 'UserController@index');
-$router->post('/user', 'UserController@create');
+$router->post('/users', 'UserController@create');
 $router->get('/users/{id}', 'UserController@show');
-$router->put('/user/{id}', 'UserController@update');
-$router->delete('/user/{id}', 'UserController@destroy');
+$router->put('/users/{id}', 'UserController@update');
+$router->delete('/users/{id}', 'UserController@destroy');
 });

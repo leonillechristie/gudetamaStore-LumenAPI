@@ -16,9 +16,9 @@ $factory->define(App\Product::class, function (Faker\Generator $faker) {
 
 $factory->define(App\User::class, function (Faker\Generator $faker) {
 	return [
-		'userid' => $faker->md5,
 		'name' => $faker->name,
 		'email' => $faker->email,
 		'password' => Hash::make('secret'),
+        'avatar' => $faker->url
 	];
 });

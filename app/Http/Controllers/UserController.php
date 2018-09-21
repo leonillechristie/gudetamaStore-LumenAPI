@@ -137,37 +137,96 @@ class UserController extends Controller
      public function create(Request $request)
      {
        $user = new User;
-       $user->userid = $request->userid;
        $user->name= $request->name;
        $user->email = $request->email;
        $user->avatar = $request->avatar;
+       $user->password = hash('ripemd160', 'secret');
 
-       // $user->password= $request->password;
-       
        $user->save();
        return response()->json($user);
      }
      
      public function show($id)
      {
-        $user = User::find($id);
-        return response()->json($user);
-     }
-     public function update(Request $request, $id)
-     { 
-        $user= User::find($id);
-        \Log::info($request->all());
+        $results = ['statusCode' => 200];
         
-        $user->name = $request->input('name');
-        $user->email = $request->input('email');
-        // $user->password = $request->input('password');
-        $user->save();
-        return response()->json($user);
+        try {
+          $user = User::find($id);
+
+          if (!is_a($user, 'App\User')) {
+            throw new \RuntimeException('User with id: { $id } not found.');
+          }
+        } catch(\Exception $e) {
+          $results['error'] = $e->getMessage();
+          $results['statusCode'] = 500;
+        }
+
+        return response()->json($user, $results['statusCode']);
      }
+
+     public function update(Request $request, $id)
+     {
+        $results = ['statusCode' => 200];
+
+        try {
+            $formData = $request->all();
+
+            $requiredFields = ['name', 'email'];
+
+            foreach ($requiredFields as $field) {
+              if (!array_key_exists($field, $formData)) {
+                throw new \InvalidArgumentException("Missing required field: {$field}");
+              }
+
+              if (strlen($formData[$field]) < 1) {
+                throw new \InvalidArgumentException("Invalid field: {$field}, must be a valid string.");   
+              }
+            }
+
+            $user = User::find($id);
+
+            if (!is_a($user, 'App\User')) {
+                throw new \RuntimeException('User does not exist.');
+            }
+
+            $existingUser = User::where('email', '=', $formData['email'])->first();
+
+            if (is_a($existingUser, 'App\User') && $existingUser->id !== $id) {
+              throw new \RuntimeException('Email is already used by another user.');
+            }
+
+            $user->name = $request->input('name');
+            $user->email = $request->input('email');
+            $user->save();
+
+            $results['data'] = $user;
+        } catch(\Exception $e) {
+            $results['error'] = $e->getMessage();
+            $results['statusCode'] = 500;
+        }
+
+        return response()->json($results, $results['statusCode']);
+     }
+
      public function destroy($id)
      {
-        $user = User::find($id);
-        $user->delete();
-        return response()->json('User removed successfully');
+        $results = ['statusCode' => 200];
+        $message = "";
+        try {
+          $user = User::find($id);
+
+          if (!is_a($user, 'App\User')) {
+            throw new \RuntimeException('User with id: { $id } not found. Cannot be deleted.');
+          }
+
+          $user->delete();
+          $message = "User successfully deleted.";
+
+        } catch(\Exception $e) {
+          $results['error'] = $e->getMessage();
+          $results['statusCode'] = 500;
+        }
+
+        return response()->json($message, $results['statusCode']);
      }
 }

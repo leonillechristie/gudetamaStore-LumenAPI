@@ -18,7 +18,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'userid', 'avatar','name', 'email',
+        'avatar','name', 'email',
     ];
 
     /**
@@ -27,6 +27,15 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $hidden = [
-        'password',
+        'id', 'password',
     ];
+
+    protected $appends = [
+        'userid'
+    ];
+
+    public function getUseridAttribute()
+    {
+        return $this->id;
+    }
 }
