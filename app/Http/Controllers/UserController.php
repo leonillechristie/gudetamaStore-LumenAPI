@@ -1,8 +1,13 @@
 <?php
 namespace App\Http\Controllers;
+
 use App\User;
+use App\Order;
+use App\Product;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use DB;
 
 class UserController extends Controller
 {
@@ -255,8 +260,21 @@ class UserController extends Controller
         } catch(\Exception $e) {
           $results['error'] = $e->getMessage();
           $results['statusCode'] = 500;
-        }
-
-        return response()->json($message, $results['statusCode']);
+        } 
      }
+
+    public function getAllProducts($id)
+    {  
+      $results = ['statusCode' => 200];
+      $message = "";
+
+      try {
+        $user = User::with('orders.products')->find($id);
+
+      } catch(\Exception $e) {
+        $results['error'] = $e->getMessage();
+        $results['statusCode'] = 500;
+      } 
+      return response()->json($user, $results['statusCode']);
+    }  
 }

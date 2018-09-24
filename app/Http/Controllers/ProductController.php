@@ -212,11 +212,14 @@ class ProductController extends Controller
 
      public function destroy($id)
      {
+        $results = ['statusCode' => 200];
+        $message = "";
+
         try {
           $product = Product::find($id);
 
-          if (!is_a($user, 'App\User')) {
-            throw new \RuntimeException('User with id: { $id } not found. Cannot be deleted.');
+          if (!is_a($product, 'App\Product')) {
+            throw new \RuntimeException('Product with id: { $id } not found. Cannot be deleted.');
           }
 
           $product->delete();
