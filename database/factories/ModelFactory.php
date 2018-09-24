@@ -15,10 +15,22 @@ $factory->define(App\Product::class, function (Faker\Generator $faker) {
 });
 
 $factory->define(App\User::class, function (Faker\Generator $faker) {
-	return [
-		'name' => $faker->name,
-		'email' => $faker->email,
-		'password' => Hash::make('secret'),
+    return [
+        'name' => $faker->name,
+        'email' => $faker->email,
+        'password' => Hash::make('secret'),
         'avatar' => $faker->url
-	];
+    ];
 });
+
+$factory->define(App\Cart::class, function (Faker\Generator $faker) {
+    $users = User::orderByRaw("RAND()")->first();
+    $products = Product::orderByRaw("RAND()")->first();
+
+    return [
+        'userid' => $user->id,
+        'productid' => $product->id,
+        'productname' => $product->productname,
+    ];
+});
+
