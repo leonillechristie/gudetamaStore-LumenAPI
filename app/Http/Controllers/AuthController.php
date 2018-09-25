@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -35,16 +34,9 @@ class AuthController extends Controller
 			$response = "";
 			$isAuthenticated = false;
 		}
-
-		//bjork bork bork
-		// if (!$hasErrors && $formData['email'] === 'test@test.com' && $formData['password'] === 'yeshello') {
-		// 	$isAuthenticated = true;
-		// 	$response['authenticated'] = $isAuthenticated;
-		// }
 		return response()->json([ 'data' =>  $response , "authenticated" => $isAuthenticated ]);
 	}
 
-	// validation for update users
 	public function updateUser(Request $request)
 	{
 		$formData = $request->all();
@@ -65,9 +57,6 @@ class AuthController extends Controller
 			$isAuthenticated = true;
 		}
 
-		$response['authenticated'] = $isAuthenticated;
-
-		// return response()->json($response);
 		return response()->json([ 'data' =>  $response , "authenticated" => $isAuthenticated ]);
 	}
 }
