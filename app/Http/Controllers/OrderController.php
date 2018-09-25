@@ -14,19 +14,18 @@ class OrderController extends Controller
   public function addOrder(Request $request)
   {
     $results = ['statusCode' => 200];
-
     try {
       $params = $request->all();
       
       $order = new Order;
       $order->user()->associate(User::find($params['user_id']));
+      $order->save();
 
       if (!is_a($order, 'App\Order')) {
         throw new \RuntimeException('Order with id: { $id } not found.');
       }
 
       $order->products()->attach($params['products']);
-      $order->save();
 
       $order = Order::with('user', 'products')->find($order->id);
     } catch(\Exception $e) {
@@ -41,7 +40,6 @@ class OrderController extends Controller
     $results = ['statusCode' => 200];
     $message = "";
     $productIds = [];
-
     try {
       $orders = Order::with('user', 'products')->find($id);
 
