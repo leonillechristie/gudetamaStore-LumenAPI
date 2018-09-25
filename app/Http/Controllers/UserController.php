@@ -68,6 +68,11 @@ class UserController extends Controller
         if (is_a($existingUser, 'App\User')) {
           throw new \RuntimeException('Email is already used by another user.');
         }
+
+        if (!filter_var($formData['email'], FILTER_VALIDATE_EMAIL)) {
+          throw new \RuntimeException('Not a valid email address.');
+        }
+
         $user->save();
     } catch(\Exception $e) {
         $results['error'] = $e->getMessage();
@@ -122,6 +127,10 @@ class UserController extends Controller
         $existingUser = User::where('email', '=', $formData['email'])->first();
         if (is_a($existingUser, 'App\User') && $existingUser->id !== $id) {
           throw new \RuntimeException('Email is already used by another user.');
+        }
+
+        if (!filter_var($formData['email'], FILTER_VALIDATE_EMAIL)) {
+          throw new \RuntimeException('Not a valid email address.');
         }
 
         $user->name = $request->input('name');
