@@ -30,7 +30,7 @@ class AuthController extends Controller
 		if (!filter_var($formData['email'], FILTER_VALIDATE_EMAIL)) {
 		  	$response['errors'][] = "{$field} is not a valid email address.";
 			$hasErrors = true;
-		}
+		} 
 
 		if (is_a($user, 'App\User') && Hash::check($formData['password'], $user->password) && !$hasErrors) {
 			$response = $user;
