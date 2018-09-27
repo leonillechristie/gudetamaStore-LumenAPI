@@ -38,6 +38,7 @@ class ProductController extends Controller
   public function create(Request $request)
   {
     $results = ['statusCode' => 200];
+    $message = "";
  
     try {
       $formData = $request->all();
@@ -76,6 +77,7 @@ class ProductController extends Controller
   public function show($id)
   {
     $results = ['statusCode' => 200];
+    $message = "";
     
     try {
       $product = Product::find($id);
@@ -94,6 +96,7 @@ class ProductController extends Controller
   public function update(Request $request, $id)
   { 
     $results = ['statusCode' => 200];
+    $message = "";
     try {
       $formData = $request->all();
       $requiredFields = ['title', 'owner', 'category', 'city', 'image', 'price', 'description'];
@@ -106,6 +109,11 @@ class ProductController extends Controller
       $product->price = $request->input('price');
       $product->description = $request->input('description');
 
+      $product = Product::find($id);
+      if (!is_a($product, 'App\Product')) {
+          throw new \RuntimeException('Product does not exist.');
+      }
+
       foreach ($requiredFields as $field) {
         if (!array_key_exists($field, $formData)) {
           throw new \InvalidArgumentException("Missing required field: {$field}");
@@ -113,11 +121,6 @@ class ProductController extends Controller
         if (strlen($formData[$field]) < 1) {
           throw new \InvalidArgumentException("Invalid field: {$field}, must be a valid string.");
         }
-      }
-
-      $product = Product::find($id);
-      if (!is_a($product, 'App\Product')) {
-          throw new \RuntimeException('Product does not exist.');
       }
 
       $product->save();
