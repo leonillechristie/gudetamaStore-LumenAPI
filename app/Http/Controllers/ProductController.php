@@ -99,17 +99,11 @@ class ProductController extends Controller
     $message = "";
     try {
       $formData = $request->all();
+
       $requiredFields = ['title', 'owner', 'category', 'city', 'image', 'price', 'description'];
-
-      $product->title = $request->input('title');
-      $product->owner = $request->input('owner');
-      $product->category = $request->input('category');
-      $product->city = $request->input('city');
-      $product->image = $request->input('image');
-      $product->price = $request->input('price');
-      $product->description = $request->input('description');
-
+      
       $product = Product::find($id);
+
       if (!is_a($product, 'App\Product')) {
           throw new \RuntimeException('Product does not exist.');
       }
@@ -123,11 +117,20 @@ class ProductController extends Controller
         }
       }
 
+      $product->title = $formData['title'];
+      $product->owner = $formData['owner'];
+      $product->category = $formData['category'];
+      $product->city = $formData['city'];
+      $product->image = $formData['image'];
+      $product->price = $formData['price'];
+      $product->description = $formData['description'];
       $product->save();
       $results['data'] = $product;
+
     } catch(\Exception $e) {
       $results['error'] = $e->getMessage();
       $results['statusCode'] = 500;
+      $results['class'] = get_class($e);
     }
 
     return response()->json($results, $results['statusCode']);
