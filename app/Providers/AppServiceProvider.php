@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
     	LumenPassport::routes($this->app->router);
-    	Passport::tokensExpireIn(Carbon::now()->addMinutes(5));
+    	Passport::tokensExpireIn(Carbon::now()->addMinutes(3));
     	Passport::refreshTokensExpireIn(Carbon::now()->addMinutes(10));
     }
 }
